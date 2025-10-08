@@ -7,7 +7,7 @@ const TabIcon = ({title, icon, focused}: {title: string, icon: React.ReactNode, 
   if (focused) return (
     <View className='flex flex-row gap-2 w-full flex-1 min-w-[112px] rounded-full min-h-16 mt-4 pt-5 bg-[#2d2952] justify-center items-start overflow-hidden'>
       {icon}
-      <Text className='text-[#f5f5f5] text-base font-bold'>{title}</Text>
+      <Text className='text-[#f5f5f5] text-base'>{title}</Text>
     </View>
   )
 

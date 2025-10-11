@@ -1,6 +1,8 @@
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
+import TrendingCard from "@/components/TrendingCard";
 import { fetchMovies } from "@/services/api";
+import { getTrendingMovies } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -9,6 +11,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const router = useRouter()
+
+  const {
+    data: trendingMovies,
+    loading: trendLoading,
+    error: trendError
+  } = useFetch(getTrendingMovies)
 
   const {
     data: movies,
@@ -32,6 +40,33 @@ export default function Index() {
             />
           </View>
         </SafeAreaView>
+
+        {trendLoading ? (
+          <ActivityIndicator
+            size='large'
+            color='#0000ff'
+            className="mt10 self-center"
+          />
+        ) : trendError ? (
+          <Text>Error: {trendError.message}</Text>
+        ) : (
+          <View className="mt-10">
+            <Text className="text-white text-lg font-bold mb-3">Trending Movies</Text>
+            <FlatList
+              className="mb-4 nt-3"
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              ItemSeparatorComponent={() => (
+                <View className="w-4"></View>
+              )}
+              data={trendingMovies}
+              renderItem={({ item, index }) => (
+                <TrendingCard movie={item} index={index} />
+              )}
+              keyExtractor={item => item.movie_id.toString()}
+            />
+          </View>
+        )}
 
         {moviesLoading ? (
           <ActivityIndicator

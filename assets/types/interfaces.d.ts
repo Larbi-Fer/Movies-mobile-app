@@ -14,3 +14,11 @@ interface Movie {
   vote_average: number;
   vote_count: number;
 }
+
+interface TrendingMovie {
+  searchTerm: string;
+  title: string;
+  poster_url: string;
+  movie_id: string;
+  count: number;
+}

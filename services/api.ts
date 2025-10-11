@@ -27,17 +27,19 @@ export const fetchMovies = async ({ query }: { query?: string }) => {
   return data.results
 }
 
+export const fetchMovieDetails = async (movieId: string) => {
+  try {
+    const response = await fetch(`${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}`, {
+      method: 'GET',
+      headers: TMDB_CONFIG.headers
+    })
 
-// const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=2&sort_by=popularity.desc';
-// const options = {
-//   method: 'GET',
-//   headers: {
-//     accept: 'application/json',
-//     Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MzY2ODgxYTI2ZmRlZDk1ZTBkZTIzMzkxYzYxODM1ZSIsIm5iZiI6MTc2MDA0Mjg1NS43MzUwMDAxLCJzdWIiOiI2OGU4MWY2NzhiNTFlNzZmYjJhYTE4MGMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WfgZ3vPDzksM1al_LZUTk9d6gRmnvqchwJ3dvNgYrGU'
-//   }
-// };
-
-// fetch(url, options)
-//   .then(res => res.json())
-//   .then(json => console.log(json))
-//   .catch(err => console.error(err));
+    if (!response.ok) throw new Error('Failed to fetch movie details')
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error
+  }
+}

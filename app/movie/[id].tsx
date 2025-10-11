@@ -3,7 +3,7 @@ import useFetch from '@/services/useFetch'
 import { router, useLocalSearchParams } from 'expo-router'
 import { ArrowLeftIcon, StarIcon } from 'lucide-react-native'
 import React from 'react'
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
 interface MovieInfoProps {
   label: string;
@@ -25,6 +25,15 @@ const MovieDetails = () => {
   const { id } = useLocalSearchParams()
 
   const {data: movie, loading} = useFetch(() => fetchMovieDetails(id as string))
+
+  if (loading) return (
+    <View className='bg-primary px-10 flex justify-center items-center flex-1 flex-col gap-5'>
+      <ActivityIndicator
+        size='large'
+        color='#0000ff'
+      />
+    </View>
+  )
 
   return (
     <View className='bg-primary flex-1'>

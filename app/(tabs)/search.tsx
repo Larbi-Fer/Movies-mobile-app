@@ -33,7 +33,7 @@ const Search = () => {
   useEffect(() => {
     const s = searchQuery.trim()
     if (s && movies?.length > 0 && movies?.[0])
-      updateSearchCount(s, movies[0])
+      updateSearchCount(movies[0].title, movies[0])
   }, [movies])
 
   return (

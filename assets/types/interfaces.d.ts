@@ -16,9 +16,9 @@ interface Movie {
 }
 
 interface TrendingMovie {
-  searchTerm: string;
+  searchTerm?: string;
   title: string;
   poster_url: string;
   movie_id: string;
-  count: number;
+  count?: number;
 }

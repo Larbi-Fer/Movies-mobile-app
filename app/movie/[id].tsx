@@ -1,9 +1,10 @@
 import { fetchMovieDetails } from '@/services/api'
 import useFetch from '@/services/useFetch'
+import { useMoviesStore } from '@/services/useMoviesStore'
 import { router, useLocalSearchParams } from 'expo-router'
-import { ArrowLeftIcon, StarIcon } from 'lucide-react-native'
+import { ArrowLeftIcon, PinIcon, StarIcon } from 'lucide-react-native'
 import React from 'react'
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 
 interface MovieInfoProps {
   label: string;
@@ -23,6 +24,7 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 
 const MovieDetails = () => {
   const { id } = useLocalSearchParams()
+  const {storeData, checkMovie, removeMovie} = useMoviesStore(false)
 
   const {data: movie, loading} = useFetch(() => fetchMovieDetails(id as string))
 
@@ -36,8 +38,25 @@ const MovieDetails = () => {
   )
 
   return (
-    <View className='bg-primary flex-1'>
+    <View className='bg-primary flex-1 relative'>
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+        <View className='absolute top-5 right-5 z-50'>
+          <TouchableOpacity onPress={async() => {
+            if (await checkMovie(movie?.id)) {
+              removeMovie(movie?.id)
+              ToastAndroid.show('Successfully removed from the saved list', ToastAndroid.SHORT)
+            } else {
+              storeData({
+                movie_id: movie?.id,
+                title: movie?.title,
+                poster_url: movie?.poster_path,
+              })
+              ToastAndroid.show('Successfully saved', ToastAndroid.SHORT)
+            }
+          }}>
+            {(async() => await checkMovie(movie?.id) ? <PinIcon color={'#ff0'} /> : <PinIcon color={'#fff'} />)()}
+          </TouchableOpacity>
+        </View>
         <Image
           source={{
             uri: movie?.poster_path ? `https://image.tmdb.org/t/p/w500${movie?.poster_path}`

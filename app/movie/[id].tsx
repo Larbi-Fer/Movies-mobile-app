@@ -1,9 +1,10 @@
 import { fetchMovieDetails } from '@/services/api'
 import useFetch from '@/services/useFetch'
+import { useHistoryStore } from '@/services/useHistoryStore'
 import { useMoviesStore } from '@/services/useMoviesStore'
 import { router, useLocalSearchParams } from 'expo-router'
 import { ArrowLeftIcon, PinIcon, StarIcon } from 'lucide-react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 
 interface MovieInfoProps {
@@ -25,8 +26,18 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 const MovieDetails = () => {
   const { id } = useLocalSearchParams()
   const {storeData, checkMovie, removeMovie} = useMoviesStore(false)
+  const {storeData: storteHistory} = useHistoryStore()
 
   const {data: movie, loading} = useFetch(() => fetchMovieDetails(id as string))
+  
+  useEffect(() => {
+    if (!movie) return
+    storteHistory({
+      movie_id: movie?.id,
+      title: movie?.title,
+      poster_url: movie?.poster_path,
+    })
+  }, [movie])
 
   if (loading) return (
     <View className='bg-primary px-10 flex justify-center items-center flex-1 flex-col gap-5'>

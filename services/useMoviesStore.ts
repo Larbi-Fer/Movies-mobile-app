@@ -36,8 +36,8 @@ export const useMoviesStore = (auto = true) => {
 
   const checkMovie = async(id: string) => {
     try {
-      const movies = JSON.parse(await getData() ?? '')
-      if (!movies) return false
+      const movies = JSON.parse(await getData() ?? '[]')
+      if (!movies.length) return false
       return movies.findIndex((m: any) => m.movie_id == id) != -1
     } catch (error) {
       console.error(error);

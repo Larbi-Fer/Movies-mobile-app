@@ -3,12 +3,14 @@ import SearchBar from '@/components/SearchBar';
 import { fetchMovies } from '@/services/api';
 import { updateSearchCount } from '@/services/appwrite';
 import useFetch from '@/services/useFetch';
+import { useSearchHistory } from '@/services/useSearchHistory';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('')
+  const {data: searchHistory, storeData: setSearchHistory} = useSearchHistory()
 
   const {
     data: movies,
@@ -32,8 +34,10 @@ const Search = () => {
 
   useEffect(() => {
     const s = searchQuery.trim()
-    if (s && movies?.length > 0 && movies?.[0])
+    if (s && movies?.length > 0 && movies?.[0]) {
       updateSearchCount(movies[0].title, movies[0])
+      setSearchHistory(s)
+    }
   }, [movies])
 
   return (
@@ -86,10 +90,23 @@ const Search = () => {
         }
         ListEmptyComponent={
           !loading && !error ? <>
-            <View className='mt-10 px5'>
-              <Text className='text-center text-gray-500'>
-                {searchQuery.trim() ? 'No movies found' : 'Search for a movie'}
-              </Text>
+            <View>
+                <FlatList
+                  data={searchHistory}
+                  renderItem={({item}) =>
+                    <Text
+                      className='px-8 py-[2px] bg-gray-500 rounded-xl m-1 color-gray-100'
+                      onPress={() => setSearchQuery(item)}
+                    >{item}</Text>}
+                  keyExtractor={(item, i) => i + item.toString()}
+                  className='flex flex-row'
+                  horizontal
+                />
+              <View className='mt-10 px5'>
+                <Text className='text-center text-gray-500'>
+                  {searchQuery.trim() ? 'No movies found' : 'Search for a movie'}
+                </Text>
+              </View>
             </View>
           </> : null
         }
